@@ -17,21 +17,21 @@ resource "aws_vpc" "db" {
   cidr_block           = "10.20.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags = { Name = "soat-db-vpc" }
+  tags                 = { Name = "soat-db-vpc" }
 }
 
 resource "aws_subnet" "db_a" {
   vpc_id                  = aws_vpc.db.id
   cidr_block              = "10.20.1.0/24"
   map_public_ip_on_launch = false
-  tags = { Name = "soat-db-subnet-a" }
+  tags                    = { Name = "soat-db-subnet-a" }
 }
 
 resource "aws_subnet" "db_b" {
   vpc_id                  = aws_vpc.db.id
   cidr_block              = "10.20.2.0/24"
   map_public_ip_on_launch = false
-  tags = { Name = "soat-db-subnet-b" }
+  tags                    = { Name = "soat-db-subnet-b" }
 }
 
 resource "aws_db_subnet_group" "db" {
@@ -39,7 +39,6 @@ resource "aws_db_subnet_group" "db" {
   subnet_ids = [aws_subnet.db_a.id, aws_subnet.db_b.id]
 }
 
-# Security group (apenas exemplo; em prod use regras mais restritas)
 resource "aws_security_group" "db" {
   name        = "soat-db-sg"
   description = "Allow Postgres"
@@ -50,7 +49,7 @@ resource "aws_security_group" "db" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # em prod NÃO use 0.0.0.0/0
+    cidr_blocks = ["0.0.0.0/0"] # Em produção, restrinja!
   }
 
   egress {
@@ -61,7 +60,6 @@ resource "aws_security_group" "db" {
   }
 }
 
-# RDS Postgres (apenas para plan; não aplique no Lab se não tiver permissão)
 resource "aws_db_instance" "postgres" {
   identifier              = "soat-db"
   allocated_storage       = 20
@@ -79,5 +77,5 @@ resource "aws_db_instance" "postgres" {
   storage_encrypted       = true
   apply_immediately       = true
   backup_retention_period = 0
-  tags = { Name = "soat-db" }
+  tags                    = { Name = "soat-db" }
 }
